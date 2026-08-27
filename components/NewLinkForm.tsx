@@ -21,15 +21,12 @@ export default function NewLinkForm({ folders }: NewLinkFormProps) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-xl rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
-    >
+    <form onSubmit={handleSubmit} className="card max-w-xl p-6">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="link-url"
-            className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            className="text-sm font-medium text-[var(--text)]"
           >
             링크
           </label>
@@ -40,14 +37,14 @@ export default function NewLinkForm({ folders }: NewLinkFormProps) {
             value={url}
             onChange={(event) => setUrl(event.target.value)}
             placeholder="https://example.com"
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+            className="field px-3 py-2 text-base"
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="link-folder"
-            className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            className="text-sm font-medium text-[var(--text)]"
           >
             폴더
           </label>
@@ -56,7 +53,7 @@ export default function NewLinkForm({ folders }: NewLinkFormProps) {
             required
             value={folderId}
             onChange={(event) => setFolderId(event.target.value)}
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+            className="field px-3 py-2 text-base"
           >
             <option value="" disabled>
               폴더를 선택해 주세요
@@ -72,13 +69,13 @@ export default function NewLinkForm({ folders }: NewLinkFormProps) {
         <div className="flex items-center gap-2 pt-1">
           <button
             type="submit"
-            className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
+            className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium"
           >
             저장
           </button>
           <Link
             href="/"
-            className="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-zinc-500 transition-colors hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="btn-secondary inline-flex items-center px-4 py-2 text-sm font-medium"
           >
             취소
           </Link>

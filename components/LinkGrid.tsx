@@ -9,7 +9,7 @@ interface LinkGridProps {
 export default function LinkGrid({ links, folders }: LinkGridProps) {
   if (links.length === 0) {
     return (
-      <div className="grid place-items-center rounded-xl border border-dashed border-zinc-300 py-20 text-sm text-zinc-400 dark:border-zinc-700 dark:text-zinc-500">
+      <div className="grid place-items-center rounded-lg border border-dashed border-[var(--border)] py-20 text-sm text-[var(--text-sub)]">
         저장된 링크가 없습니다.
       </div>
     );

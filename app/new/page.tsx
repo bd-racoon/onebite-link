@@ -13,11 +13,9 @@ export default function NewLinkPage() {
     <AppShell
       sidebar={<Sidebar folders={folders} totalCount={links.length} />}
     >
-      <div className="mb-4">
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
-          새 링크
-        </h2>
-        <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
+      <div className="mb-5">
+        <h2 className="text-xl font-semibold text-[var(--text)]">새 링크</h2>
+        <p className="mt-1 text-sm text-[var(--text-sub)]">
           저장할 링크와 폴더를 선택하세요.
         </p>
       </div>

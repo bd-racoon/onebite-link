@@ -13,8 +13,8 @@ export default function Sidebar({ folders, totalCount }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-full shrink-0 sm:w-56">
-      <nav className="flex flex-col gap-1">
+    <aside className="w-full shrink-0 sm:w-52">
+      <nav className="flex flex-col gap-0.5">
         <SidebarItem
           href="/"
           label="All"
@@ -22,7 +22,7 @@ export default function Sidebar({ folders, totalCount }: SidebarProps) {
           active={pathname === "/"}
         />
 
-        <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
+        <p className="px-3 pb-1 pt-5 text-xs font-semibold uppercase tracking-wide text-[var(--text-sub)]">
           폴더
         </p>
 
@@ -52,20 +52,10 @@ function SidebarItem({ href, label, count, active }: SidebarItemProps) {
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-        active
-          ? "bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300"
-          : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/60"
-      }`}
+      className="nav-item flex items-center justify-between px-3 py-1.5 text-sm font-medium"
     >
       <span className="truncate">{label}</span>
-      <span
-        className={`ml-2 rounded-full px-2 py-0.5 text-xs tabular-nums ${
-          active
-            ? "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-200"
-            : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
-        }`}
-      >
+      <span className="badge ml-2 px-1.5 py-0.5 text-xs tabular-nums">
         {count}
       </span>
     </Link>

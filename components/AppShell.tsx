@@ -8,9 +8,9 @@ interface AppShellProps {
 
 export default function AppShell({ sidebar, children }: AppShellProps) {
   return (
-    <div className="min-h-full flex-1 bg-zinc-50 dark:bg-zinc-950">
+    <div className="min-h-full flex-1 bg-[var(--background)]">
       <Header />
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:flex-row sm:px-6">
+      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-10 sm:flex-row">
         {sidebar}
         <main className="min-w-0 flex-1">{children}</main>
       </div>

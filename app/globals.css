@@ -1,26 +1,119 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Notion 스타일 — 라이트모드 전용 */
+  --background: #f7f7f5;
+  --surface: #ffffff;
+  --text: #37352f;
+  --text-sub: #787774; /* 가이드값(#9B9A97)은 배경 대비 3:1 미만이라 어둡게 조정 */
+  --placeholder: #b4b3ae;
+  --border: #e3e3e0;
+  --accent: #2eaadc;
+  --accent-hover: #2898c4;
+  --hover-bg: #f1f1ef;
+  --error: #eb5757;
+  --success: #4dab9a;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  color: var(--text);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  line-height: 1.6;
+}
+
+@layer components {
+  /* ── 카드 ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .card-hover:hover {
+    background: var(--hover-bg);
+  }
+
+  .card-hover:hover .card-title {
+    color: var(--accent);
+  }
+
+  .card-title {
+    transition: color 0.15s ease;
+  }
+
+  /* ── 버튼 ── */
+  .btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+
+  .btn-secondary:hover {
+    background: var(--hover-bg);
+  }
+
+  /* ── 네비게이션 아이템 (사이드바) ── */
+  .nav-item {
+    border-radius: 6px;
+    color: var(--text-sub);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-item:hover {
+    background: var(--hover-bg);
+    color: var(--text);
+  }
+
+  .nav-item[aria-current="page"] {
+    background: var(--hover-bg);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ── 입력 필드 / 셀렉트 ── */
+  .field {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    transition: border-color 0.15s ease;
+  }
+
+  .field::placeholder {
+    color: var(--placeholder);
+  }
+
+  .field:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  /* ── 뱃지 ── */
+  .badge {
+    background: var(--hover-bg);
+    color: var(--text-sub);
+    border-radius: 4px;
+  }
 }
