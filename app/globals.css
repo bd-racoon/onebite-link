@@ -12,6 +12,7 @@
   --accent-hover: #2898c4;
   --hover-bg: #f1f1ef;
   --error: #eb5757;
+  --error-hover: #d64545;
   --success: #4dab9a;
 }
 
@@ -74,6 +75,17 @@ body {
     background: var(--hover-bg);
   }
 
+  .btn-danger {
+    background: var(--error);
+    color: #ffffff;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+
+  .btn-danger:hover {
+    background: var(--error-hover);
+  }
+
   /* ── 네비게이션 아이템 (사이드바) ── */
   .nav-item {
     border-radius: 6px;
@@ -115,5 +127,33 @@ body {
     background: var(--hover-bg);
     color: var(--text-sub);
     border-radius: 4px;
+  }
+
+  /* ── 사이드바 폴더 행 (호버 시 삭제 버튼 노출) ── */
+  .folder-count {
+    transition: opacity 0.15s ease;
+  }
+
+  .folder-delete {
+    opacity: 0;
+    pointer-events: none;
+    color: var(--text-sub);
+    border-radius: 4px;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+
+  .folder-row:hover .folder-delete,
+  .folder-delete:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .folder-row:hover .folder-count {
+    opacity: 0;
+  }
+
+  .folder-delete:hover {
+    background: var(--hover-bg);
+    color: var(--error);
   }
 }
