@@ -129,12 +129,12 @@ body {
     border-radius: 4px;
   }
 
-  /* ── 사이드바 폴더 행 (호버 시 삭제 버튼 노출) ── */
+  /* ── 사이드바 폴더 행 (호버 시 수정/삭제 버튼 노출) ── */
   .folder-count {
     transition: opacity 0.15s ease;
   }
 
-  .folder-delete {
+  .folder-action {
     opacity: 0;
     pointer-events: none;
     color: var(--text-sub);
@@ -142,8 +142,8 @@ body {
     transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
   }
 
-  .folder-row:hover .folder-delete,
-  .folder-delete:focus-visible {
+  .folder-row:hover .folder-action,
+  .folder-action:focus-visible {
     opacity: 1;
     pointer-events: auto;
   }
@@ -152,8 +152,12 @@ body {
     opacity: 0;
   }
 
-  .folder-delete:hover {
+  .folder-action:hover {
     background: var(--hover-bg);
+    color: var(--text);
+  }
+
+  .folder-action-danger:hover {
     color: var(--error);
   }
 }

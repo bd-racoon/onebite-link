@@ -6,6 +6,7 @@ import type { Folder } from "@/lib/types";
 interface FoldersContextValue {
   folders: Folder[];
   addFolder: (name: string) => void;
+  renameFolder: (id: string, name: string) => void;
   removeFolder: (id: string) => void;
 }
 
@@ -36,12 +37,25 @@ export function FoldersProvider({
     ]);
   };
 
+  const renameFolder = (id: string, name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+
+    setFolders((prev) =>
+      prev.map((folder) =>
+        folder.id === id ? { ...folder, name: trimmed } : folder,
+      ),
+    );
+  };
+
   const removeFolder = (id: string) => {
     setFolders((prev) => prev.filter((folder) => folder.id !== id));
   };
 
   return (
-    <FoldersContext.Provider value={{ folders, addFolder, removeFolder }}>
+    <FoldersContext.Provider
+      value={{ folders, addFolder, renameFolder, removeFolder }}
+    >
       {children}
     </FoldersContext.Provider>
   );
