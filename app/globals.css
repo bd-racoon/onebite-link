@@ -170,7 +170,7 @@ body {
     color: var(--accent);
   }
 
-  .link-card-delete {
+  .link-card-action {
     opacity: 0;
     pointer-events: none;
     background: var(--surface);
@@ -179,14 +179,18 @@ body {
     transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
   }
 
-  .link-card:hover .link-card-delete,
-  .link-card-delete:focus-visible {
+  .link-card:hover .link-card-action,
+  .link-card-action:focus-visible {
     opacity: 1;
     pointer-events: auto;
   }
 
-  .link-card-delete:hover {
+  .link-card-action:hover {
     background: var(--hover-bg);
+    color: var(--text);
+  }
+
+  .link-card-action-danger:hover {
     color: var(--error);
   }
 }

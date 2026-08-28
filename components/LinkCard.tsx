@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { LinkItem } from "@/lib/types";
 import { useLinks } from "./LinksProvider";
 import ConfirmDialog from "./ConfirmDialog";
+import EditLinkDialog from "./EditLinkDialog";
 
 interface LinkCardProps {
   link: LinkItem;
@@ -19,7 +20,8 @@ function hostname(url: string) {
 }
 
 export default function LinkCard({ link, folderName }: LinkCardProps) {
-  const { removeLink } = useLinks();
+  const { updateLink, removeLink } = useLinks();
+  const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
   return (
@@ -69,26 +71,54 @@ export default function LinkCard({ link, folderName }: LinkCardProps) {
         </div>
       </a>
 
-      <button
-        type="button"
-        onClick={() => setConfirming(true)}
-        aria-label={`${link.title} 링크 삭제`}
-        className="link-card-delete absolute right-2 top-2 inline-flex items-center justify-center rounded-md p-1.5"
-      >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          className="size-4"
+      <div className="absolute right-2 top-2 flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          aria-label={`${link.title} 링크 수정`}
+          className="link-card-action inline-flex items-center justify-center rounded-md p-1.5"
         >
-          <path d="M8 3a1 1 0 0 0-1 1v1H4a1 1 0 1 0 0 2h12a1 1 0 1 0 0-2h-3V4a1 1 0 0 0-1-1H8Z" />
-          <path
-            fillRule="evenodd"
-            d="M6 8h8l-.62 7.45A2 2 0 0 1 11.39 17H8.61a2 2 0 0 1-1.99-1.55L6 8Zm3 1.75a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 9 9.75Zm2.75.75a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0v-3.5Z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="size-4"
+          >
+            <path d="M13.586 3.586a2 2 0 1 1 2.828 2.828l-8.379 8.379a2 2 0 0 1-.878.506l-3.216.804a.5.5 0 0 1-.606-.606l.804-3.216a2 2 0 0 1 .506-.878l8.379-8.379Zm2.121.707a1 1 0 0 0-1.414 0l-.94.94 1.414 1.414.94-.94a1 1 0 0 0 0-1.414Z" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={() => setConfirming(true)}
+          aria-label={`${link.title} 링크 삭제`}
+          className="link-card-action link-card-action-danger inline-flex items-center justify-center rounded-md p-1.5"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="size-4"
+          >
+            <path d="M8 3a1 1 0 0 0-1 1v1H4a1 1 0 1 0 0 2h12a1 1 0 1 0 0-2h-3V4a1 1 0 0 0-1-1H8Z" />
+            <path
+              fillRule="evenodd"
+              d="M6 8h8l-.62 7.45A2 2 0 0 1 11.39 17H8.61a2 2 0 0 1-1.99-1.55L6 8Zm3 1.75a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 9 9.75Zm2.75.75a.75.75 0 0 0-1.5 0v3.5a.75.75 0 0 0 1.5 0v-3.5Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {editing && (
+        <EditLinkDialog
+          link={link}
+          onSave={(patch) => {
+            updateLink(link.id, patch);
+            setEditing(false);
+          }}
+          onCancel={() => setEditing(false)}
+        />
+      )}
 
       <ConfirmDialog
         open={confirming}

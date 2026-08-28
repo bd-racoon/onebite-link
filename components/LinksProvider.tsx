@@ -4,10 +4,12 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import type { LinkItem } from "@/lib/types";
 
 type NewLinkInput = Omit<LinkItem, "id" | "createdAt">;
+type LinkPatch = Partial<Pick<LinkItem, "folderId" | "title" | "description">>;
 
 interface LinksContextValue {
   links: LinkItem[];
   addLink: (link: NewLinkInput) => void;
+  updateLink: (id: string, patch: LinkPatch) => void;
   removeLink: (id: string) => void;
 }
 
@@ -36,12 +38,18 @@ export function LinksProvider({ initialLinks, children }: LinksProviderProps) {
     ]);
   };
 
+  const updateLink = (id: string, patch: LinkPatch) => {
+    setLinks((prev) =>
+      prev.map((link) => (link.id === id ? { ...link, ...patch } : link)),
+    );
+  };
+
   const removeLink = (id: string) => {
     setLinks((prev) => prev.filter((link) => link.id !== id));
   };
 
   return (
-    <LinksContext.Provider value={{ links, addLink, removeLink }}>
+    <LinksContext.Provider value={{ links, addLink, updateLink, removeLink }}>
       {children}
     </LinksContext.Provider>
   );
