@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { Folder } from "@/lib/types";
+import { useFolders } from "./FoldersProvider";
 
 interface SidebarProps {
-  folders: Folder[];
   totalCount: number;
 }
 
-export default function Sidebar({ folders, totalCount }: SidebarProps) {
+export default function Sidebar({ totalCount }: SidebarProps) {
   const pathname = usePathname();
+  const { folders } = useFolders();
 
   return (
     <aside className="w-full shrink-0 sm:w-52">

@@ -35,7 +35,7 @@ export default async function FolderPage({ params }: FolderPageProps) {
   const folderLinks = links.filter((link) => link.folderId === folder.id);
 
   return (
-    <AppShell sidebar={<Sidebar folders={folders} totalCount={links.length} />}>
+    <AppShell sidebar={<Sidebar totalCount={links.length} />}>
       <LinkSection title={folder.name} links={folderLinks} folders={folders} />
     </AppShell>
   );

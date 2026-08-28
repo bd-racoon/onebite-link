@@ -1,3 +1,4 @@
+import NewFolderButton from "./NewFolderButton";
 import NewLinkButton from "./NewLinkButton";
 
 export default function Header() {
@@ -11,7 +12,10 @@ export default function Header() {
           <span className="text-[var(--accent)]">한입</span>
           <span>링크</span>
         </a>
-        <NewLinkButton />
+        <div className="flex items-center gap-2">
+          <NewFolderButton />
+          <NewLinkButton />
+        </div>
       </div>
     </header>
   );

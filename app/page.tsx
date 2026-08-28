@@ -5,7 +5,7 @@ import { folders, links } from "@/lib/mock-data";
 
 export default function Home() {
   return (
-    <AppShell sidebar={<Sidebar folders={folders} totalCount={links.length} />}>
+    <AppShell sidebar={<Sidebar totalCount={links.length} />}>
       <LinkSection title="All" links={links} folders={folders} />
     </AppShell>
   );

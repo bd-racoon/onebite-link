@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function NewLinkPage() {
   return (
     <AppShell
-      sidebar={<Sidebar folders={folders} totalCount={links.length} />}
+      sidebar={<Sidebar totalCount={links.length} />}
     >
       <div className="mb-5">
         <h2 className="text-xl font-semibold text-[var(--text)]">새 링크</h2>
