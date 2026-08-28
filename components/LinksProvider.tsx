@@ -8,6 +8,7 @@ type NewLinkInput = Omit<LinkItem, "id" | "createdAt">;
 interface LinksContextValue {
   links: LinkItem[];
   addLink: (link: NewLinkInput) => void;
+  removeLink: (id: string) => void;
 }
 
 const LinksContext = createContext<LinksContextValue | null>(null);
@@ -35,8 +36,12 @@ export function LinksProvider({ initialLinks, children }: LinksProviderProps) {
     ]);
   };
 
+  const removeLink = (id: string) => {
+    setLinks((prev) => prev.filter((link) => link.id !== id));
+  };
+
   return (
-    <LinksContext.Provider value={{ links, addLink }}>
+    <LinksContext.Provider value={{ links, addLink, removeLink }}>
       {children}
     </LinksContext.Provider>
   );

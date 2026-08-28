@@ -160,4 +160,33 @@ body {
   .folder-action-danger:hover {
     color: var(--error);
   }
+
+  /* ── 링크 카드 삭제 버튼 (호버 시 우측 상단 노출) ── */
+  .link-card:hover .card-hover {
+    background: var(--hover-bg);
+  }
+
+  .link-card:hover .card-title {
+    color: var(--accent);
+  }
+
+  .link-card-delete {
+    opacity: 0;
+    pointer-events: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+
+  .link-card:hover .link-card-delete,
+  .link-card-delete:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .link-card-delete:hover {
+    background: var(--hover-bg);
+    color: var(--error);
+  }
 }
