@@ -3,21 +3,54 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { Folder } from "@/lib/types";
+import type { OpenGraphResult } from "@/app/api/og/route";
+import { useFolders } from "./FoldersProvider";
+import { useLinks } from "./LinksProvider";
 
-interface NewLinkFormProps {
-  folders: Folder[];
-}
-
-export default function NewLinkForm({ folders }: NewLinkFormProps) {
+export default function NewLinkForm() {
   const router = useRouter();
+  const { folders } = useFolders();
+  const { addLink } = useLinks();
+
   const [url, setUrl] = useState("");
   const [folderId, setFolderId] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // UI 단계이므로 실제 저장 없이 목록으로 이동
-    router.push("/");
+    if (submitting) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/og?url=${encodeURIComponent(url)}`);
+      const data = (await response.json()) as Partial<OpenGraphResult> & {
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "링크 정보를 불러오지 못했습니다.");
+      }
+
+      addLink({
+        url: data.url || url,
+        title: data.title || url,
+        description: data.description ?? "",
+        thumbnail: data.image || undefined,
+        folderId,
+      });
+
+      router.push(folderId ? `/folder/${folderId}` : "/");
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "알 수 없는 오류가 발생했습니다.",
+      );
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -39,6 +72,9 @@ export default function NewLinkForm({ folders }: NewLinkFormProps) {
             placeholder="https://example.com"
             className="field px-3 py-2 text-base"
           />
+          <p className="text-xs text-[var(--text-sub)]">
+            저장 시 페이지의 제목·설명·썸네일을 자동으로 수집합니다.
+          </p>
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -66,12 +102,17 @@ export default function NewLinkForm({ folders }: NewLinkFormProps) {
           </select>
         </div>
 
+        {error ? (
+          <p className="text-sm text-[var(--error)]">{error}</p>
+        ) : null}
+
         <div className="flex items-center gap-2 pt-1">
           <button
             type="submit"
-            className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium"
+            disabled={submitting}
+            className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
           >
-            저장
+            {submitting ? "저장 중…" : "저장"}
           </button>
           <Link
             href="/"

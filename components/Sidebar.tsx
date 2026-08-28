@@ -5,17 +5,15 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { Folder } from "@/lib/types";
 import { useFolders } from "./FoldersProvider";
+import { useLinks } from "./LinksProvider";
 import ConfirmDialog from "./ConfirmDialog";
 import EditFolderDialog from "./EditFolderDialog";
 
-interface SidebarProps {
-  totalCount: number;
-}
-
-export default function Sidebar({ totalCount }: SidebarProps) {
+export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { folders, renameFolder, removeFolder } = useFolders();
+  const { links } = useLinks();
   const [pendingEdit, setPendingEdit] = useState<Folder | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Folder | null>(null);
 
@@ -35,7 +33,7 @@ export default function Sidebar({ totalCount }: SidebarProps) {
         <SidebarItem
           href="/"
           label="All"
-          count={totalCount}
+          count={links.length}
           active={pathname === "/"}
         />
 
@@ -48,7 +46,7 @@ export default function Sidebar({ totalCount }: SidebarProps) {
             key={folder.id}
             href={`/folder/${folder.id}`}
             label={folder.name}
-            count={folder.linkCount}
+            count={links.filter((link) => link.folderId === folder.id).length}
             active={pathname === `/folder/${folder.id}`}
             onEdit={() => setPendingEdit(folder)}
             onDelete={() => setPendingDelete(folder)}

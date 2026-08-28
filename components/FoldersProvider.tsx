@@ -33,7 +33,7 @@ export function FoldersProvider({
 
     setFolders((prev) => [
       ...prev,
-      { id: `folder-${Date.now()}`, name: trimmed, linkCount: 0 },
+      { id: `folder-${Date.now()}`, name: trimmed },
     ]);
   };
 

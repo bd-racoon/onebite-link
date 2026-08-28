@@ -1,7 +1,6 @@
 export interface Folder {
   id: string;
   name: string;
-  linkCount: number;
 }
 
 export interface LinkItem {
@@ -9,6 +8,7 @@ export interface LinkItem {
   title: string;
   description: string;
   url: string;
+  thumbnail?: string;
   folderId: string;
   createdAt: string;
 }

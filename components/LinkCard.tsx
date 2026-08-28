@@ -19,8 +19,21 @@ export default function LinkCard({ link, folderName }: LinkCardProps) {
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="card card-hover flex h-full flex-col p-4"
+      className="card card-hover flex h-full flex-col overflow-hidden p-4"
     >
+      {link.thumbnail ? (
+        <div className="mb-3 aspect-[1.91/1] w-full overflow-hidden rounded-md bg-[var(--hover-bg)]">
+          {/* OG 썸네일은 임의 도메인이라 next/image 대신 일반 img 사용 */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={link.thumbnail}
+            alt=""
+            loading="lazy"
+            className="size-full object-cover"
+          />
+        </div>
+      ) : null}
+
       <div className="flex items-center gap-2">
         <span className="badge grid size-7 shrink-0 place-items-center text-xs font-bold uppercase">
           {link.title.charAt(0)}

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import AppShell from "@/components/AppShell";
 import Sidebar from "@/components/Sidebar";
 import NewLinkForm from "@/components/NewLinkForm";
-import { folders, links } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "새 링크 · 한입 링크",
@@ -10,9 +9,7 @@ export const metadata: Metadata = {
 
 export default function NewLinkPage() {
   return (
-    <AppShell
-      sidebar={<Sidebar totalCount={links.length} />}
-    >
+    <AppShell sidebar={<Sidebar />}>
       <div className="mb-5">
         <h2 className="text-xl font-semibold text-[var(--text)]">새 링크</h2>
         <p className="mt-1 text-sm text-[var(--text-sub)]">
@@ -20,7 +17,7 @@ export default function NewLinkPage() {
         </p>
       </div>
 
-      <NewLinkForm folders={folders} />
+      <NewLinkForm />
     </AppShell>
   );
 }

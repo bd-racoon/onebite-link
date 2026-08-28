@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import Sidebar from "@/components/Sidebar";
-import LinkSection from "@/components/LinkSection";
-import { folders, links } from "@/lib/mock-data";
+import LinkListView from "@/components/LinkListView";
+import { folders } from "@/lib/mock-data";
 
 interface FolderPageProps {
   params: Promise<{ folderId: string }>;
@@ -32,11 +32,9 @@ export default async function FolderPage({ params }: FolderPageProps) {
     notFound();
   }
 
-  const folderLinks = links.filter((link) => link.folderId === folder.id);
-
   return (
-    <AppShell sidebar={<Sidebar totalCount={links.length} />}>
-      <LinkSection title={folder.name} links={folderLinks} folders={folders} />
+    <AppShell sidebar={<Sidebar />}>
+      <LinkListView folderId={folder.id} fallbackTitle={folder.name} />
     </AppShell>
   );
 }
