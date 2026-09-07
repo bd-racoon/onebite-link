@@ -17,10 +17,10 @@ export default function Sidebar() {
   const [pendingEdit, setPendingEdit] = useState<Folder | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Folder | null>(null);
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!pendingDelete) return;
 
-    removeFolder(pendingDelete.id);
+    await removeFolder(pendingDelete.id);
     if (pathname === `/folder/${pendingDelete.id}`) {
       router.push("/");
     }

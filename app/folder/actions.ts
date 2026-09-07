@@ -53,3 +53,16 @@ export async function updateFolderName(
 
   return { id: String(data.id), name: data.name };
 }
+
+/**
+ * folders 테이블에서 폴더를 삭제한다.
+ * links.folder_id 는 FK가 ON DELETE SET NULL 이라 자동으로 비워진다.
+ */
+export async function deleteFolder(id: string): Promise<void> {
+  const supabase = createClient(await cookies());
+  const { error } = await supabase.from("folders").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(error.message ?? "폴더를 삭제하지 못했습니다.");
+  }
+}
