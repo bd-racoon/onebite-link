@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 import { FoldersProvider } from "@/components/FoldersProvider";
 import { LinksProvider } from "@/components/LinksProvider";
-import { links } from "@/lib/mock-data";
-import type { Folder } from "@/lib/types";
+import { mapLinkRow } from "@/lib/links";
+import type { Folder, LinkItem } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 import "./globals.css";
 
@@ -25,15 +25,22 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = createClient(await cookies());
-  const { data: folderRows } = await supabase
-    .from("folders")
-    .select("id, name")
-    .order("created_at", { ascending: true });
+  const [{ data: folderRows }, { data: linkRows }] = await Promise.all([
+    supabase
+      .from("folders")
+      .select("id, name")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("links")
+      .select("id, url, title, description, thumbnail_url, folder_id, created_at")
+      .order("created_at", { ascending: false }),
+  ]);
 
   const initialFolders: Folder[] = (folderRows ?? []).map((row) => ({
     id: String(row.id),
     name: row.name,
   }));
+  const initialLinks: LinkItem[] = (linkRows ?? []).map(mapLinkRow);
 
   return (
     <html
@@ -42,7 +49,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <FoldersProvider initialFolders={initialFolders}>
-          <LinksProvider initialLinks={links}>{children}</LinksProvider>
+          <LinksProvider initialLinks={initialLinks}>{children}</LinksProvider>
         </FoldersProvider>
       </body>
     </html>

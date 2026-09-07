@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { OpenGraphResult } from "@/app/api/og/route";
@@ -16,11 +16,14 @@ export default function NewLinkForm() {
   const [folderId, setFolderId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // 중복 클릭 방지: 상태 반영을 기다리지 않고 즉시 재진입을 막는다.
+  const submittingRef = useRef(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (submitting) return;
+    if (submittingRef.current) return;
 
+    submittingRef.current = true;
     setSubmitting(true);
     setError(null);
 
@@ -34,7 +37,7 @@ export default function NewLinkForm() {
         throw new Error(data.error ?? "링크 정보를 불러오지 못했습니다.");
       }
 
-      addLink({
+      await addLink({
         url: data.url || url,
         title: data.title || url,
         description: data.description ?? "",
@@ -49,6 +52,7 @@ export default function NewLinkForm() {
           ? caught.message
           : "알 수 없는 오류가 발생했습니다.",
       );
+      submittingRef.current = false;
       setSubmitting(false);
     }
   };
