@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LinkItem } from "@/lib/types";
 import { useFolders } from "./FoldersProvider";
 
@@ -10,13 +10,14 @@ interface EditLinkDialogProps {
     folderId: string;
     title: string;
     description: string;
-  }) => void;
+  }) => void | Promise<void>;
   onCancel: () => void;
 }
 
 /**
  * 링크의 폴더·제목·설명만 수정하는 모달.
  * 부모가 마운트/언마운트로 열고 닫으며, 배경 클릭·취소·ESC로 닫힌다.
+ * 저장은 비동기(links 테이블 업데이트)이므로 진행 중에는 중복 제출을 막는다.
  */
 export default function EditLinkDialog({
   link,
@@ -27,6 +28,9 @@ export default function EditLinkDialog({
   const [folderId, setFolderId] = useState(link.folderId);
   const [title, setTitle] = useState(link.title);
   const [description, setDescription] = useState(link.description);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -37,14 +41,28 @@ export default function EditLinkDialog({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onCancel]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!title.trim()) return;
-    onSave({
-      folderId,
-      title: title.trim(),
-      description: description.trim(),
-    });
+    if (!title.trim() || submittingRef.current) return;
+
+    submittingRef.current = true;
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await onSave({
+        folderId,
+        title: title.trim(),
+        description: description.trim(),
+      });
+    } catch (caught) {
+      setError(
+        caught instanceof Error ? caught.message : "링크를 수정하지 못했습니다.",
+      );
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -122,6 +140,10 @@ export default function EditLinkDialog({
             />
           </div>
 
+          {error ? (
+            <p className="text-sm text-[var(--error)]">{error}</p>
+          ) : null}
+
           <div className="flex justify-end gap-2">
             <button
               type="button"
@@ -132,9 +154,10 @@ export default function EditLinkDialog({
             </button>
             <button
               type="submit"
-              className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium"
+              disabled={submitting}
+              className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
             >
-              저장
+              {submitting ? "저장 중…" : "저장"}
             </button>
           </div>
         </form>

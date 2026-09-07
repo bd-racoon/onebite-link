@@ -112,8 +112,8 @@ export default function LinkCard({ link, folderName }: LinkCardProps) {
       {editing && (
         <EditLinkDialog
           link={link}
-          onSave={(patch) => {
-            updateLink(link.id, patch);
+          onSave={async (patch) => {
+            await updateLink(link.id, patch);
             setEditing(false);
           }}
           onCancel={() => setEditing(false)}
