@@ -82,3 +82,15 @@ export async function updateLink(
 
   return mapLinkRow(data);
 }
+
+/**
+ * links 테이블에서 링크를 삭제한다.
+ */
+export async function deleteLink(id: string): Promise<void> {
+  const supabase = createClient(await cookies());
+  const { error } = await supabase.from("links").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(error.message ?? "링크를 삭제하지 못했습니다.");
+  }
+}

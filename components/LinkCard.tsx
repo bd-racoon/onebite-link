@@ -126,8 +126,8 @@ export default function LinkCard({ link, folderName }: LinkCardProps) {
         description={`'${link.title}' 링크를 삭제할까요? 이 작업은 되돌릴 수 없습니다.`}
         confirmLabel="삭제"
         cancelLabel="취소"
-        onConfirm={() => {
-          removeLink(link.id);
+        onConfirm={async () => {
+          await removeLink(link.id);
           setConfirming(false);
         }}
         onCancel={() => setConfirming(false)}

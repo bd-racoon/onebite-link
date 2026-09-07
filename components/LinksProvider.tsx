@@ -2,7 +2,11 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { LinkItem } from "@/lib/types";
-import { createLink, updateLink as updateLinkAction } from "@/app/new/actions";
+import {
+  createLink,
+  deleteLink,
+  updateLink as updateLinkAction,
+} from "@/app/new/actions";
 
 type NewLinkInput = Omit<LinkItem, "id" | "createdAt">;
 type LinkPatch = Partial<Pick<LinkItem, "folderId" | "title" | "description">>;
@@ -11,7 +15,7 @@ interface LinksContextValue {
   links: LinkItem[];
   addLink: (link: NewLinkInput) => Promise<void>;
   updateLink: (id: string, patch: LinkPatch) => Promise<void>;
-  removeLink: (id: string) => void;
+  removeLink: (id: string) => Promise<void>;
 }
 
 const LinksContext = createContext<LinksContextValue | null>(null);
@@ -24,7 +28,7 @@ interface LinksProviderProps {
 /**
  * 링크 목록을 클라이언트 상태로 보관한다.
  * 초기값은 서버에서 links 테이블을 읽어 주입받고,
- * 추가·수정은 서버 액션으로 links 테이블에 반영한 뒤 상태에 반영한다.
+ * 추가·수정·삭제는 서버 액션으로 links 테이블에 반영한 뒤 상태에 반영한다.
  */
 export function LinksProvider({ initialLinks, children }: LinksProviderProps) {
   const [links, setLinks] = useState<LinkItem[]>(initialLinks);
@@ -41,7 +45,8 @@ export function LinksProvider({ initialLinks, children }: LinksProviderProps) {
     );
   };
 
-  const removeLink = (id: string) => {
+  const removeLink = async (id: string) => {
+    await deleteLink(id);
     setLinks((prev) => prev.filter((link) => link.id !== id));
   };
 
