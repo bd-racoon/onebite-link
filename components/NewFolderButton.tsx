@@ -1,23 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFolders } from "./FoldersProvider";
 
 export default function NewFolderButton() {
   const { addFolder } = useFolders();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  // 중복 클릭 방지: 상태 업데이트를 기다리지 않고 즉시 재진입을 막는다.
+  const submittingRef = useRef(false);
 
   const close = () => {
     setOpen(false);
     setName("");
+    setError(null);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!name.trim()) return;
-    addFolder(name);
-    close();
+    const trimmed = name.trim();
+    if (!trimmed || submittingRef.current) return;
+
+    submittingRef.current = true;
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await addFolder(trimmed);
+      close();
+    } catch (caught) {
+      setError(
+        caught instanceof Error ? caught.message : "폴더를 추가하지 못했습니다.",
+      );
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -88,6 +108,10 @@ export default function NewFolderButton() {
                 />
               </div>
 
+              {error ? (
+                <p className="text-sm text-[var(--error)]">{error}</p>
+              ) : null}
+
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
@@ -98,9 +122,10 @@ export default function NewFolderButton() {
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium"
+                  disabled={submitting}
+                  className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  저장
+                  {submitting ? "저장 중…" : "저장"}
                 </button>
               </div>
             </form>

@@ -2,10 +2,11 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { Folder } from "@/lib/types";
+import { createFolder } from "@/app/folder/actions";
 
 interface FoldersContextValue {
   folders: Folder[];
-  addFolder: (name: string) => void;
+  addFolder: (name: string) => Promise<void>;
   renameFolder: (id: string, name: string) => void;
   removeFolder: (id: string) => void;
 }
@@ -19,7 +20,8 @@ interface FoldersProviderProps {
 
 /**
  * 폴더 목록을 클라이언트 상태로 보관한다.
- * UI 단계라 실제 저장소는 없고, 초기값은 서버에서 목 데이터로 주입받는다.
+ * 초기값은 서버에서 folders 테이블을 읽어 주입받고,
+ * 추가는 서버 액션으로 folders 테이블에 저장한 뒤 상태에 반영한다.
  */
 export function FoldersProvider({
   initialFolders,
@@ -27,14 +29,12 @@ export function FoldersProvider({
 }: FoldersProviderProps) {
   const [folders, setFolders] = useState<Folder[]>(initialFolders);
 
-  const addFolder = (name: string) => {
+  const addFolder = async (name: string) => {
     const trimmed = name.trim();
     if (!trimmed) return;
 
-    setFolders((prev) => [
-      ...prev,
-      { id: `folder-${Date.now()}`, name: trimmed },
-    ]);
+    const folder = await createFolder(trimmed);
+    setFolders((prev) => [...prev, folder]);
   };
 
   const renameFolder = (id: string, name: string) => {
