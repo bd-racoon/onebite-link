@@ -58,8 +58,8 @@ export default function Sidebar() {
         <EditFolderDialog
           key={pendingEdit.id}
           initialName={pendingEdit.name}
-          onSave={(name) => {
-            renameFolder(pendingEdit.id, name);
+          onSave={async (name) => {
+            await renameFolder(pendingEdit.id, name);
             setPendingEdit(null);
           }}
           onCancel={() => setPendingEdit(null)}

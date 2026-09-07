@@ -26,3 +26,30 @@ export async function createFolder(name: string): Promise<Folder> {
 
   return { id: String(data.id), name: data.name };
 }
+
+/**
+ * folders 테이블의 폴더 이름을 수정하고, 갱신된 행을 돌려준다.
+ */
+export async function updateFolderName(
+  id: string,
+  name: string,
+): Promise<Folder> {
+  const trimmed = name.trim();
+  if (!trimmed) {
+    throw new Error("폴더 이름을 입력해 주세요.");
+  }
+
+  const supabase = createClient(await cookies());
+  const { data, error } = await supabase
+    .from("folders")
+    .update({ name: trimmed })
+    .eq("id", id)
+    .select("id, name")
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message ?? "폴더 이름을 수정하지 못했습니다.");
+  }
+
+  return { id: String(data.id), name: data.name };
+}

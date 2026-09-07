@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface EditFolderDialogProps {
   initialName: string;
-  onSave: (name: string) => void;
+  onSave: (name: string) => void | Promise<void>;
   onCancel: () => void;
 }
 
@@ -12,6 +12,7 @@ interface EditFolderDialogProps {
  * 폴더 이름을 수정하는 모달. 현재 이름으로 인풋이 채워진 채로 열린다.
  * 부모가 마운트/언마운트로 열고 닫으며(folder id를 key로 사용),
  * 배경 클릭·취소·ESC로 닫힌다.
+ * 저장은 비동기(folders 테이블 업데이트)이므로 진행 중에는 중복 제출을 막는다.
  */
 export default function EditFolderDialog({
   initialName,
@@ -19,6 +20,9 @@ export default function EditFolderDialog({
   onCancel,
 }: EditFolderDialogProps) {
   const [name, setName] = useState(initialName);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -29,10 +33,27 @@ export default function EditFolderDialog({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onCancel]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!name.trim()) return;
-    onSave(name);
+    const trimmed = name.trim();
+    if (!trimmed || submittingRef.current) return;
+
+    submittingRef.current = true;
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await onSave(trimmed);
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "폴더 이름을 수정하지 못했습니다.",
+      );
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -73,6 +94,10 @@ export default function EditFolderDialog({
             />
           </div>
 
+          {error ? (
+            <p className="text-sm text-[var(--error)]">{error}</p>
+          ) : null}
+
           <div className="flex justify-end gap-2">
             <button
               type="button"
@@ -83,9 +108,10 @@ export default function EditFolderDialog({
             </button>
             <button
               type="submit"
-              className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium"
+              disabled={submitting}
+              className="btn-primary inline-flex items-center px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
             >
-              저장
+              {submitting ? "저장 중…" : "저장"}
             </button>
           </div>
         </form>
