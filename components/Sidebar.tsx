@@ -8,6 +8,7 @@ import { useFolders } from "./FoldersProvider";
 import { useLinks } from "./LinksProvider";
 import ConfirmDialog from "./ConfirmDialog";
 import EditFolderDialog from "./EditFolderDialog";
+import LogoutButton from "./LogoutButton";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -28,7 +29,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-full shrink-0 sm:w-52">
+    <aside className="flex w-full shrink-0 flex-col sm:w-52">
       <nav className="flex flex-col gap-0.5">
         <SidebarItem
           href="/"
@@ -53,6 +54,10 @@ export default function Sidebar() {
           />
         ))}
       </nav>
+
+      <div className="mt-auto border-t border-[var(--border)] pt-3">
+        <LogoutButton />
+      </div>
 
       {pendingEdit && (
         <EditFolderDialog
