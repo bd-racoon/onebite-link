@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { translateAuthError } from "@/lib/auth-errors";
 import Toast from "./Toast";
@@ -13,9 +14,25 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [kakaoLoading, setKakaoLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   // 중복 클릭 방지: 상태 반영을 기다리지 않고 즉시 재진입을 막는다.
   const submittingRef = useRef(false);
+
+  // 카카오 로그인은 리다이렉트로 이 페이지에 돌아온 뒤 URL의 인가 코드로
+  // Supabase가 비동기로 세션을 만들어 준다. 세션이 만들어지면 홈으로 이동한다.
+  useEffect(() => {
+    const supabase = createClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") {
+        router.push("/");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
 
   const canSubmit = email !== "" && password !== "";
 
@@ -41,6 +58,26 @@ export default function LoginForm() {
     }
 
     router.push("/");
+  };
+
+  const handleKakaoLogin = async () => {
+    if (kakaoLoading || submittingRef.current) return;
+
+    setKakaoLoading(true);
+    setToastMessage(null);
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: {
+        redirectTo: `${window.location.origin}/login`,
+      },
+    });
+
+    if (error) {
+      setToastMessage(translateAuthError(error.message));
+      setKakaoLoading(false);
+    }
   };
 
   return (
@@ -90,6 +127,22 @@ export default function LoginForm() {
           className="btn-primary mt-1 inline-flex items-center justify-center px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
         >
           {submitting ? "로그인 중…" : "로그인"}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleKakaoLogin}
+          disabled={kakaoLoading || submitting}
+          aria-label="카카오로 로그인"
+          className="overflow-hidden rounded-md disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <Image
+            src="/kakao_login_large_wide.png"
+            alt="카카오 로그인"
+            width={600}
+            height={90}
+            className="h-auto w-full"
+          />
         </button>
 
         <Link
