@@ -43,6 +43,7 @@ export default function SignupForm() {
     }
 
     router.push("/");
+    router.refresh();
   };
 
   return (

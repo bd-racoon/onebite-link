@@ -78,6 +78,7 @@ export default function ResetPasswordForm() {
     }
 
     router.push("/");
+    router.refresh();
   };
 
   if (status === "loading") {
